@@ -167,7 +167,7 @@ func (c Command) reloadProxyWithTest(tempFile *os.File) error {
 	if _, err := moveFile(c.Config.TargetPath, tempFile.Name()); err != nil {
 		return fmt.Errorf("Aborting reload: renaming %q to %q failed: %v", tempFile.Name(), c.Config.TargetPath, err)
 	}
-	if err := execCommand("/", []string{"nginx", "-s", "reload", "-c", tempFile.Name()}); err != nil {
+	if err := execCommand("/", []string{"nginx", "-s", "reload", "-c", c.Config.TargetPath}); err != nil {
 		return fmt.Errorf("Aborting reload: error signaling nginx process: %v", err)
 	}
 	return nil
