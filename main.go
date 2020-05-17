@@ -36,6 +36,8 @@ type (
 		ProxyPort int
 		// TargetPath to render proxy config to
 		TargetPath string
+		// PidPath to signal master process
+		PidPath string
 		// TemplateDir to scan for TemplateFile
 		TemplateDir string
 		// TemplateFile used to render proxy config
@@ -167,7 +169,8 @@ func (c Command) reloadProxyWithTest(tempFile *os.File) error {
 	if _, err := moveFile(c.Config.TargetPath, tempFile.Name()); err != nil {
 		return fmt.Errorf("Aborting reload: renaming %q to %q failed: %v", tempFile.Name(), c.Config.TargetPath, err)
 	}
-	if err := execCommand("/", []string{"nginx", "-s", "reload", "-c", c.Config.TargetPath}); err != nil {
+	pidDirective := fmt.Sprintf("pid %s;", c.Config.PidPath)
+	if err := execCommand("/", []string{"nginx", "-s", "reload", "-c", c.Config.TargetPath, "-g", pidDirective}); err != nil {
 		return fmt.Errorf("Aborting reload: error signaling nginx process: %v", err)
 	}
 	return nil
@@ -320,6 +323,13 @@ func initApp() *cli.App {
 			Usage:       "Destination path for rendered proxy config",
 			Destination: &conf.TargetPath,
 			EnvVars:     []string{"CONF_TARGET_PATH"},
+		},
+		&cli.StringFlag{
+			Name:        "pid-path",
+			Value:       "/etc/nginx/nginx.pid",
+			Usage:       "Destination path for rendered proxy config",
+			Destination: &conf.PidPath,
+			EnvVars:     []string{"CONF_PID_PATH"},
 		},
 		&cli.StringFlag{
 			Name:        "template-dir",

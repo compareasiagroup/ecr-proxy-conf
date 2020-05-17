@@ -17,6 +17,7 @@ Environment Variables
 | `CONF_PROXY_CACHE_MAX_SIZE` | nginx cache max size (default: `75g`                          |
 | `CONF_PROXY_CACHE_PATH`     | nginx cache path (default: `/cache/cache`)                    |
 | `CONF_TARGET_PATH`          | target path for nginx conf (default: `/etc/nginx/nginx.conf`) |
+| `CONF_PID_PATH`             | nginx pid path (default: `/etc/nginx/nginx.pid`)              |
 | `CONF_TEMPLATE_DIR`         | template dir for nginx conf (default: `./conf-templates`)     |
 | `CONF_TEMPLATE_FILE`        | template for nginx conf (default: `nginx.tpl.conf`)           |
 | `CONF_SSL_KEY_PATH`         | path to SSL key (default: `/etc/nginx/ssl/key.pem`)           |
