@@ -161,13 +161,13 @@ func (c Command) renderProxyConf(auth *ecrAuth, f *os.File) error {
 
 // reloadProxyWithTest by overwriting config if test is successful
 func (c Command) reloadProxyWithTest(tempFile *os.File) error {
-	if err := execCommand("/", []string{"nginx", "-test", tempFile.Name()}); err != nil {
+	if err := execCommand("/", []string{"nginx", "-t", "-c", tempFile.Name()}); err != nil {
 		return fmt.Errorf("Aborting reload: error validating %q: %v", tempFile.Name(), err)
 	}
 	if _, err := moveFile(c.Config.TargetPath, tempFile.Name()); err != nil {
 		return fmt.Errorf("Aborting reload: renaming %q to %q failed: %v", tempFile.Name(), c.Config.TargetPath, err)
 	}
-	if err := execCommand("/", []string{"nginx", "-reload", tempFile.Name()}); err != nil {
+	if err := execCommand("/", []string{"nginx", "-s", "reload", "-c", tempFile.Name()}); err != nil {
 		return fmt.Errorf("Aborting reload: error signaling nginx process: %v", err)
 	}
 	return nil
@@ -225,6 +225,9 @@ func (c Command) init() (err error) {
 	defer f.Close()
 	if err := c.renderProxyConf(auth, f); err != nil {
 		return err
+	}
+	if err := execCommand("/", []string{"nginx", "-t", "-c", f.Name()}); err != nil {
+		return fmt.Errorf("Error in init: error validating %q: %v", f.Name(), err)
 	}
 	return nil
 }

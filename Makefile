@@ -2,6 +2,8 @@ ECR_REPO:=thirdparty/ecr-proxy-conf
 DOCKER_TAG:=$(ECR_REGISTRY_URL)/$(ECR_REPO):v0.1.0
 GO_LDFLAGS_STATIC=-ldflags "-w $(CTIMEVAR) -extldflags -static"
 
+NGINX_TAG:="1.18.0-alpine"
+
 .PHONY: build docker static docker/login push
 
 build:
@@ -15,6 +17,7 @@ static:
 
 docker: Dockerfile
 	docker build \
+		--build-arg NGINX_TAG=$(NGINX_TAG) \
 		-t $(DOCKER_TAG) .
 
 docker/login:

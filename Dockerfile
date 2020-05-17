@@ -1,3 +1,4 @@
+ARG NGINX_TAG
 
 FROM golang:alpine as builder
 
@@ -23,10 +24,9 @@ RUN set -x \
 	&& rm -rf /go \
 	&& echo "Build complete."
 
-FROM scratch
+FROM nginx:${NGINX_TAG}
 
 COPY --from=builder /usr/bin/ecr-proxy-conf /usr/bin/ecr-proxy-conf
-COPY --from=builder /etc/ssl/certs/ /etc/ssl/certs
 
 COPY conf-templates /conf-templates
 
